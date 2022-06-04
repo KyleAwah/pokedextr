@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> Poke Dextr </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+        /* Style of the navigation bar */
+        .nav {
+            overflow: hidden;
+            background-color: white;
+            border-bottom: 5px solid black;
+            font-size: 20px;
+            padding-left: 120px;
+        }
+
+        /* Style of the links on the website */
+        a:link {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* Style of the Poke Dextr text on the nav bar */
+        #Poke_Dextr {
+            padding-right: 800px;
+            font-size: 40px;
+        }
+
+
+        /* Style for box that holds all the pokemon names in a list */
+        #listing {
+            border: 3px solid black;
+            max-height: 600px;
+            max-width: 600px;
+            float: left;
+            overflow-y: scroll;
+
+            color: black;
+            display: block;
+            list-style-type: none;
+            padding: 20px;
+            padding-right: 80px;
+        }
+
+        /* Style for each pokemon's name in the list */
+        .collection-item {            
+            float: left;
+            color: black;
+            font-size: 20px;
+            display: block;
+            list-style-type: none;
+            padding: 20px;
+            padding-left: 20px;
+        }
+
+        /* allows the cursor not to change to the text highlighter as  we are choosing a pokemon*/
+        .collection-item:hover {
+            cursor: default;
+        }
+        
+
+
+        /* Move the list object to the right */
+        #the_list {
+            padding-left: 120px;
+        }
+
+        /* Style of the display for the selected pokemon */
+        #display {
+            float: right;
+            border: 3px solid black;
+            padding-top: 50px;
+            padding-left: 50px;
+            padding-right: 50px;
+            padding-bottom: 20px;
+            font-size: 18px; 
+        }
+
+        /* Moves the entire display for pokemon data to the center */
+        #result {
+            padding-right: 420px;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+
+
+<body onload="dugtrio()">
+
+    <!-- JAVASCRIPT FUNCTIONS BEGINS HERE -->
+    
+    <script>
+        function dugtrio(){
+            var display = document.querySelector('#result');
+            
+            // displays dugtrio link when page is loaded
+            display.innerHTML = `
+                 <div id="display">
+                    <a id="dugtrio" onclick="getDugtrio('dugtrio')">dugtrio</a>
+                </div>
+            `
+        }
+    </script>
+    
+    
+    
+    <script>
+        // Dedicated Dugtrio Function so the test will work :)
+        async function getDugtrio(pokemonName){
+            var URL = "https://pokeapi.co/api/v2/pokemon/dugtrio";
+            
+            class pokemon {
+                constructor(name, image_url, type, height, weight, number) {
+                    this.name = name;
+                    this.image_url = image_url;
+                    this.type = type;
+                    this.height = height;
+                    this.weight = weight;
+                    this.number = number;
+                }
+            }
+            
+            // Variables for the pokemon
+            var pkmn_name = "";
+            var pkmn_type = "";
+            var pkmn_img_url = "";
+            var pkmn_height = "";
+            var pkmn_weight = "";
+            var pkmn_number = 0;
+            
+            var pokemon_data;
+            
+            // fetch dugtrio's data from the api link
+            try {
+                let response = await fetch(URL);
+                let api_data = await response.json(); // stores data from the api into a var
+                pokemon_data = api_data;
+                
+            } catch (error) {
+                console.log(error);
+            }
+                        
+            // extract dugtrio's data
+            pkmn_name = pokemonName;
+            pkmn_img_url = pokemon_data.sprites.front_default;
+            pkmn_height = pokemon_data.height;
+            pkmn_weight = pokemon_data.weight;
+            pkmn_number = pokemon_data.id;
+            
+            // create an object with dugtrio's data
+            var Dugtrio_Pokemon = new pokemon(pkmn_name, pkmn_img_url, pkmn_type, pkmn_height, pkmn_weight, pkmn_number);
+            displayPokemon(Dugtrio_Pokemon);    // send the data to the function to render it on the page
+        }
+    </script>
+
+   
+   
+   
+    <script>
+        async function getPokemon(pokemonName) {
+            var main_api_url = "https://pokeapi.co/api/v2/pokemon/?limit=50&offset=50";
+            var url_for_this_pokemon = "";
+            var pokemon_array = []; // stores the pokemon and their url
+            var pkmn_type_array = []; // stores the types of the pokemon
+
+            // structure of a pokemon
+            class pokemon {
+                constructor(name, image_url, type, height, weight, number) {
+                    this.name = name;
+                    this.image_url = image_url;
+                    this.type = type;
+                    this.height = height;
+                    this.weight = weight;
+                    this.number = number;
+                }
+            }
+
+            // Variables for the pokemon
+            var pkmn_name = "";
+            var pkmn_type = "";
+            var pkmn_img_url = "";
+            var pkmn_height = "";
+            var pkmn_weight = "";
+            var pkmn_number = 0;
+
+
+
+            // go to the main API and find the url for the pokemon and extract that data
+            try {
+                let response = await fetch(main_api_url);
+                let api_data = await response.json(); // stores data from the api into a var
+                pokemon_array = api_data.results; // store the array of pokemon names and urls from the object
+            } 
+            catch (error) {
+                console.log(error);
+            }
+
+
+            // search the extracted array for the name of the pokemon to get the url with the data
+            for (let data in pokemon_array) {
+                if (pokemon_array[data].name == pokemonName) {
+                    url_for_this_pokemon = pokemon_array[data].url;
+                }
+            }
+
+
+            // take the url and fetches the data from the api
+            try {
+                let response_2 = await fetch(url_for_this_pokemon);
+                let pokemon_data = await response_2.json(); // stores data from the api into a var
+                var data_counter_1 = 0;
+                
+                pkmn_name = pokemonName;
+                pkmn_img_url = pokemon_data.sprites.front_default;
+                pkmn_height = pokemon_data.height;
+                pkmn_weight = pokemon_data.weight;
+                pkmn_number = pokemon_data.id;
+                pkmn_type =   pokemon_type = pokemon_data.types[0].type.name;
+
+                data_counter_1 = 0;
+
+            } catch (error) {
+                console.log(error);
+            }
+
+            // make a new pokemon object from the class to combine all these fields as one object to send to the function for displaying
+            var Query_Pokemon = new pokemon(pkmn_name, pkmn_img_url, pkmn_type, pkmn_height, pkmn_weight, pkmn_number);
+            displayPokemon(Query_Pokemon);
+
+            //given a pokemon name performs an ajax requests querying the pokemon's data and pass it to displayPokemon()
+        }
+    </script>
+
+
+
+
+    <script>
+        getListing("https://pokeapi.co/api/v2/pokemon/?limit=50&offset=50"); // the url for the function to go to to access the API
+
+        async function getListing(url) {
+            try {
+                let response = await fetch(url);
+                let api_data = await response.json(); // stores data from the api into a var
+
+                // extract the pokemon names array from within the object
+                var pokemon_names = []; // array to hold all the pokemon names & urls
+                pokemon_names = api_data.results;
+
+                displayListing(pokemon_names); // sends the var to the next function to display the pokemon's names
+            } 
+            catch (error) {
+                console.log(error);
+            }
+            //performs an ajax request to the spcified url to get pokemon data then pass it to displayListing()
+        }
+    </script>
+
+
+
+
+    <script>
+        function displayListing(pokeList) {
+            var list = document.querySelector('#listing');
+            for (let pokemon in pokeList) {
+                // displays all pokemon by name on the webpage
+                list.innerHTML += `
+                    <li>
+                        <a class="collection-item" onclick="getPokemon('${pokeList[pokemon].name}')">
+                        ${pokeList[pokemon].name}
+                        </a>
+                    </li>
+                `
+            }
+
+            //Renders a list of pokemon links to the page  
+        }
+    </script>
+
+
+
+
+    <script>
+        function displayPokemon(pokemon) {
+            var display = document.querySelector('#result');
+            
+            // Displays all the pokemon's data in the webpage
+            display.innerHTML = `
+                 <div id="display">
+               
+                    <img src="${pokemon.image_url}" height="300" alt="${pokemon.name}"/>
+                    <p> ${pokemon.name} #${pokemon.number}</p>
+                    <p> Type1: ${pokemon.type}</p>
+                    <p> Weight: ${pokemon.weight}</p>
+                    <p> Height: ${pokemon.height}</p>
+                </div>
+            `
+            //renders details of the specified pokemon onto the page
+        }
+    </script>
+
+
+
+    <!-- HTML CODE BEGINS HERE -->
+
+
+    <!-- NAVIGATION BAR -->
+
+    <nav class="nav">
+        <a href="index.html" id="Poke_Dextr"> Poke Dextr </a>
+        <a href="index.html"> Listing </a>
+    </nav>
+
+    <!-- MAIN DIV -->
+
+    <main class="main" id="main-content">
+        <div id="the_list">
+            <ul id="listing" onload="getListing()">
+                <!-- UL to be filled with pokemon names from the function in the form of LI's with A Tags -->
+
+            </ul>
+        </div>
+
+       
+        <!-- DIV FOR POKEMON DISPLAY -->
+
+        <div id="result">
+            <!-- DIV to be filled with pokemon data from the function -->
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

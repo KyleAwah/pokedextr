@@ -1,5 +1,3 @@
-# pokedextr
-
 # Poke Dextr
 
 <p>
